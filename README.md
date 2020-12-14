@@ -2,6 +2,9 @@
 
 This is a tool used to send messages in morse code with obfuscation. The specs are available [here](https://gist.github.com/kmckelvin/e742e132b338960ca6b02b2eedeed855#file-part-2-md).
 
+## Assumptions
+1. If the encoded letter doesn't exists in the spec list, it will be ignored and removed from the output.
+
 ## Installation
 
 This package haven't been released to NPM. So, to use locally, you should build it and link it.
