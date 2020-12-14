@@ -1,13 +1,23 @@
-import { parseArgs, readInput, writeOutput } from "./io";
-import { convertToMorse, obfuscateMorse } from "./morse";
+#!/usr/bin/env node
+import program from "commander";
+import { fileMode, interactiveMode } from "./io-cli";
 
 export async function cli(): Promise<void> {
-  const inputMode = parseArgs();
-  const input = await readInput(inputMode);
-  const morse = convertToMorse(input);
-  const obfuscatedMorse = obfuscateMorse(morse);
-  await writeOutput(obfuscatedMorse);
+  program
+    .version('0.0.1')
+    .description("Generates an obfuscated morse code message")
+    .option('-f, --file <path>', 'Read the input from <path> and outputs it in a file <path>.min')
+    .parse(process.argv);
+
+  try {
+    if (program.file) {
+      await fileMode(program.file);
+    } else {
+      interactiveMode();
+    }
+  } catch(e) {
+    console.log(e);
+  }
 }
 
 cli();
-

@@ -1,40 +1,43 @@
-jest.mock("../src/morse");
-jest.mock("../src/io");
+const baseCommander = jest.requireActual("commander");
+const mockCommander: Command = {
+  ...baseCommander,
+  version: jest.fn().mockImplementation(() => mockCommander),
+  description: jest.fn().mockImplementation(() => mockCommander),
+  option: jest.fn().mockImplementation(() => mockCommander),
+  parse: jest.fn().mockImplementation(() => mockCommander),
+};
+  
+jest.mock("commander", () => mockCommander);
+jest.mock("../src/io-cli");
 
 import { cli } from "../src/index";
-import * as io from "../src/io";
-import * as morse from "../src/morse";
+import * as ioCli from "../src/io-cli";
+import program, { Command } from "commander";
 
-
-const mockParseArgs = io.parseArgs as jest.Mock;
-const mockReadInput = io.readInput as jest.Mock;
-const mockWriteOutput = io.writeOutput as jest.Mock;
-
-const mockConvertToMorse = morse.convertToMorse as jest.Mock;
-const mockObfuscateMorse = morse.obfuscateMorse as jest.Mock;
+const mockFileMode = ioCli.fileMode as jest.Mock;
+const mockInteractiveMode = ioCli.interactiveMode as jest.Mock;
 
 describe("method: cli", () => {
-  const mockInput = "HELLO";
-  // TODO get the real morse for HELLO
-  const mockMorse = "../.-|--/..|-./-|.-.|---|..-|-...|.-..|."
-  const mockObfuscatedMorse = "4|1|1A2|1A2|C";
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("happy path: succesfully converts to morse, obfuscate it and output it to a file", async () => {
-    mockParseArgs.mockReturnValue(io.InputMode.FILE);
-    mockReadInput.mockResolvedValue(mockInput);
-    mockConvertToMorse.mockReturnValue(mockMorse);
-    mockObfuscateMorse.mockReturnValue(mockObfuscatedMorse);
+  it("configure cli parameter", async () => {
+    cli();
+    expect(mockCommander.option).toHaveBeenCalledWith('-f, --file <path>', 'Read the input from <path> and outputs it in a file <path>.min');
+    expect(mockCommander.parse).toHaveBeenCalledWith(process.argv);
+  });
 
+  it("run the file mode if the -file flag is present", async () => {
+    const mockFilePath = "./some_file.txt";
+    program.file = mockFilePath;
     await cli();
+    expect(mockFileMode).toHaveBeenCalledWith(mockFilePath);
+  });
 
-    expect(mockParseArgs).toHaveBeenCalledWith();
-    expect(mockReadInput).toHaveBeenCalledWith(io.InputMode.FILE);
-    expect(mockConvertToMorse).toHaveBeenCalledWith(mockInput);
-    expect(mockObfuscateMorse).toHaveBeenCalledWith(mockMorse);
-    expect(mockWriteOutput).toHaveBeenCalledWith(mockObfuscatedMorse);
+  it("run the interactive mode if no flag present", () => {
+    program.file = null;
+    cli();
+    expect(mockInteractiveMode).toHaveBeenCalled();
   });
 });
