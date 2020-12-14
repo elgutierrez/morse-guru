@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/index.js",
   "bin": {
-    "morse": "./build/index.js"
+    "morse-guru": "./build/index.js"
   },
   "scripts": {
     "start": "tsc && node build/index.js",
