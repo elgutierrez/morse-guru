@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import readline from "readline";
-import es from "event-stream";
+import { split, join, mapSync } from "event-stream";
 import { existsSync, createReadStream, createWriteStream } from 'fs';
 import { encodeMessage } from "./morse";
 
@@ -9,12 +9,14 @@ export function fileMode(filePath: string): Promise<void> {
     if (!existsSync(filePath)) {
       return reject(`File '${filePath}' does not exits`)
     }
-    const readStream = createReadStream(filePath);
+    const readStream = createReadStream(filePath, {flags: 'r'});
     const writeStream = createWriteStream(`${filePath}.min`);
 
     readStream
       .on('error', reject)
-      .pipe(es.mapSync((chunk: string) => encodeMessage(chunk.toString())))
+      .pipe(split())
+      .pipe(mapSync((chunk: string) => encodeMessage(chunk.toString())))
+      .pipe(join("\n"))
       .pipe(writeStream)
       .on('finish', resolve)
       .on('error', reject)
