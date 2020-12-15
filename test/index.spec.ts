@@ -1,8 +1,6 @@
-import program, { Command } from 'commander';
-import cli from '../src/index';
-import * as ioCli from '../src/io-cli';
-
+/* eslint-disable import/first */
 const baseCommander = jest.requireActual('commander');
+// eslint-disable-next-line no-use-before-define
 const mockCommander: Command = {
   ...baseCommander,
   version: jest.fn().mockImplementation(() => mockCommander),
@@ -13,6 +11,11 @@ const mockCommander: Command = {
 
 jest.mock('commander', () => mockCommander);
 jest.mock('../src/io-cli');
+
+import cli from '../src/index';
+import * as ioCli from '../src/io-cli';
+// eslint-disable-next-line import/order
+import program, { Command } from 'commander';
 
 const mockFileMode = ioCli.fileMode as jest.Mock;
 const mockInteractiveMode = ioCli.interactiveMode as jest.Mock;

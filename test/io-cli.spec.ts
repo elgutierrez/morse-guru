@@ -1,19 +1,18 @@
+/* eslint-disable import/first */
 import events from 'events';
 
-import fs from 'fs';
-import readline from 'readline';
-import { PassThrough } from 'stream';
-
-import * as morse from '../src/morse';
-import { interactiveMode, fileMode } from '../src/io-cli';
-
 const mockEventEmitter = new events.EventEmitter();
-
 jest.mock('../src/morse');
 jest.mock('readline', () => ({
   createInterface: jest.fn().mockReturnValue(mockEventEmitter),
 }));
 jest.mock('fs');
+
+import fs from 'fs';
+import readline from 'readline';
+import { PassThrough } from 'stream';
+import * as morse from '../src/morse';
+import { interactiveMode, fileMode } from '../src/io-cli';
 
 const mockEncodeMessage = morse.encodeMessage as jest.Mock;
 
