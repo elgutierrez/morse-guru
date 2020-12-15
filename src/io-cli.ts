@@ -7,12 +7,13 @@ import { encodeMessage } from './morse';
 export function fileMode(filePath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     if (!existsSync(filePath)) {
+      // eslint-disable-next-line prefer-promise-reject-errors
       return reject(`File '${filePath}' does not exits`);
     }
     const readStream = createReadStream(filePath, { flags: 'r' });
     const writeStream = createWriteStream(`${filePath}.min`);
 
-    readStream
+    return readStream
       .on('error', reject)
       .pipe(split())
       .pipe(mapSync((chunk: string) => encodeMessage(chunk.toString())))
@@ -25,5 +26,6 @@ export function fileMode(filePath: string): Promise<void> {
 
 export function interactiveMode(): void {
   const rl = readline.createInterface({ input: process.stdin });
+  // eslint-disable-next-line no-console
   rl.on('line', (line) => console.log(encodeMessage(line)));
 }

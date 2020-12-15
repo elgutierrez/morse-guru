@@ -1,5 +1,5 @@
 import program, { Command } from 'commander';
-import { cli } from '../src/index';
+import cli from '../src/index';
 import * as ioCli from '../src/io-cli';
 
 const baseCommander = jest.requireActual('commander');

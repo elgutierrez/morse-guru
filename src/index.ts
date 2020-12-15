@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import program from 'commander';
-import { fileMode, interactiveMode } from './io-cli.ts';
+import { fileMode, interactiveMode } from './io-cli';
 
-export async function cli(): Promise<void> {
+async function cli(): Promise<void> {
   program
     .version('0.0.1')
     .description('Generates an obfuscated morse code message')
@@ -16,8 +16,11 @@ export async function cli(): Promise<void> {
       interactiveMode();
     }
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log(e);
   }
 }
 
 cli();
+
+export default cli;

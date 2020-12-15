@@ -100,14 +100,14 @@ describe('method: fileMode', () => {
     const result = fileMode(mockFilePath);
 
     setTimeout(() => {
-      mockReadStream.emit('data', 'some');
+      mockReadStream.emit('data', 'some\n');
       mockReadStream.emit('data', 'message');
       mockReadStream.emit('end');
     }, 100);
 
     await expect(result).resolves.toEqual(undefined);
 
-    expect(mockCreateReadStream).toHaveBeenCalledWith(mockFilePath);
+    expect(mockCreateReadStream).toHaveBeenCalledWith(mockFilePath, { flags: 'r' });
     expect(mockCreateWriteStream).toHaveBeenCalledWith(`${mockFilePath}.min`);
     expect(mockEncodeMessage).toHaveBeenCalledWith('some');
     expect(mockEncodeMessage).toHaveBeenCalledWith('message');
